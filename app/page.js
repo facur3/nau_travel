@@ -1,0 +1,129 @@
+"use client";
+import { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
+
+// ⬇️ Import dinámico SIN SSR para evitar errores de hidratación y permitir inicio aleatorio
+const VideoCarousel = dynamic(() => import('../components/VideoCarousel'), {
+  ssr: false,
+});
+
+import CardNav from '../components/CardNav';
+import SplitText from '../components/SplitText';
+import BlurText from '../components/BlurText';
+
+export default function Home() {
+  const [showSlogan, setShowSlogan] = useState(false);
+  const [randomStartIndex, setRandomStartIndex] = useState(0);
+
+  const handleTitleComplete = () => {
+    setTimeout(() => {
+      setShowSlogan(true);
+    }, 2000);
+  };
+
+  // List of videos in the public/carrusel folder
+  const carouselVideos = [
+    '/carrusel/avion.mp4',
+    '/carrusel/barco.mp4',
+    '/carrusel/globos.mp4',
+    '/carrusel/playa.mp4',
+    '/carrusel/puente.mp4',
+  ];
+
+  // Generate random start index on client side
+  useEffect(() => {
+    setRandomStartIndex(Math.floor(Math.random() * carouselVideos.length));
+  }, [carouselVideos.length]);
+
+  const navItems = [
+    {
+      label: "Destinos",
+      bgColor: "#000",
+      textColor: "#fff",
+      links: [
+        { label: "Europa", ariaLabel: "Viajes a Europa", href: "#europa" },
+        { label: "Asia", ariaLabel: "Viajes a Asia", href: "#asia" },
+        { label: "América", ariaLabel: "Viajes a América", href: "#america" }
+      ]
+    },
+    {
+      label: "Experiencias",
+      bgColor: "#000", 
+      textColor: "#fff",
+      links: [
+        { label: "Aventura", ariaLabel: "Viajes de Aventura", href: "#aventura" },
+        { label: "Relajación", ariaLabel: "Viajes de Relajación", href: "#relax" },
+        { label: "Cultural", ariaLabel: "Viajes Culturales", href: "#cultural" }
+      ]
+    },
+    {
+      label: "Servicios",
+      bgColor: "#000",
+      textColor: "#fff", 
+      links: [
+        { label: "Vuelos", ariaLabel: "Reserva de Vuelos", href: "#vuelos" },
+        { label: "Hoteles", ariaLabel: "Reserva de Hoteles", href: "#hoteles" },
+        { label: "Seguros", ariaLabel: "Seguros de Viaje", href: "#seguros" }
+      ]
+    }
+  ];
+
+  return (
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Video Carousel Background */}
+      <VideoCarousel 
+        videos={carouselVideos}
+        interval={10000}
+        className="z-0"
+        startIndex={randomStartIndex}
+        // podés ajustar lo sutil del crossfade acá:
+        // crossfadeDuration={1.8}
+      />
+      
+      <CardNav
+        logo="/logo.svg"
+        logoAlt="Nau Travel Logo"
+        items={navItems}
+        baseColor="#fff"
+        menuColor="#1F2937"
+        buttonBgColor="#000"
+        buttonTextColor="#fff"
+        ease="power3.out"
+      />
+      
+      <main className="relative z-20 flex flex-col items-center justify-center min-h-screen px-8 pt-20">
+        <div className="text-center max-w-4xl mx-auto">
+          <SplitText
+            text="NAU TRAVEL"
+            className="text-6xl md:text-8xl font-bold text-white mb-6 drop-shadow-2xl"
+            delay={80}
+            duration={0.8}
+            ease="power3.out"
+            splitType="chars"
+            from={{ opacity: 0, y: 60, rotateX: -90 }}
+            to={{ opacity: 1, y: 0, rotateX: 0 }}
+            threshold={0.3}
+            textAlign="center"
+            onAnimationComplete={handleTitleComplete}
+          />
+          <BlurText
+            text="El viaje de tus sueños comienza now"
+            delay={150}
+            animateBy="words"
+            direction="top"
+            className="text-xl md:text-2xl text-white font-light tracking-wide mb-8 drop-shadow-lg"
+          />
+        </div>
+        
+        <div className="mt-16 flex flex-col sm:flex-row gap-4">
+          <button className="hover:cursor-pointer relative px-6 py-4 bg-white bg-opacity-90 text-gray-800 font-bold text-lg rounded-2xl shadow-lg transition-all duration-250 overflow-hidden hover:text-white before:content-[''] before:absolute before:top-0 before:left-0 before:h-full before:w-0 before:bg-black before:rounded-2xl before:transition-all before:duration-250 before:z-[-1] hover:before:w-full z-10 backdrop-blur-sm">
+            Explorar Destinos
+          </button>
+          <button className="hover:cursor-pointer relative px-6 py-4 bg-transparent border-2 border-white text-white font-bold text-lg rounded-2xl shadow-lg transition-all duration-250 overflow-hidden hover:text-black before:content-[''] before:absolute before:top-0 before:left-0 before:h-full before:w-0 before:bg-white before:rounded-2xl before:transition-all before:duration-250 before:z-[-1] hover:before:w-full z-10 backdrop-blur-sm">
+            Contactar Asesor
+          </button>
+        </div>
+      </main>
+    </div>
+  );
+}
