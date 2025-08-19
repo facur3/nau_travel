@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 /**
@@ -8,45 +8,55 @@ import { motion, AnimatePresence } from "framer-motion";
  * - interval: ms (default 10000)
  * - className: string
  * - crossfadeDuration: seconds (default 1.8)
- * - startIndex: number (default 0)
+ * - startIndex?: number  // si lo pasás, se usa como primer video; si no, arranca random
  */
 const VideoCarousel = ({
   videos = [],
   interval = 10000,
   className = "",
   crossfadeDuration = 1.8,
-  startIndex = 0,
+  startIndex,
 }) => {
-  if (!Array.isArray(videos)) videos = [];
+  // 1) No renderizamos el <video> hasta que el componente monte en cliente.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
-  // Usar startIndex proporcionado por el componente padre
-  const [current, setCurrent] = useState(startIndex);
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  // Update current index when startIndex changes
-  useEffect(() => {
-    if (videos.length > 0 && startIndex >= 0 && startIndex < videos.length) {
-      setCurrent(startIndex);
+  // 2) Elegimos el índice inicial sólo cuando está montado (así evitamos SSR mismatch)
+  const safeStartIndex = useMemo(() => {
+    if (!mounted || videos.length === 0) return 0;
+    if (typeof startIndex === "number" && !Number.isNaN(startIndex)) {
+      const norm = ((startIndex % videos.length) + videos.length) % videos.length;
+      return norm;
     }
-  }, [startIndex, videos.length]);
+    // random sólo en cliente
+    return Math.floor(Math.random() * videos.length);
+  }, [mounted, startIndex, videos.length]);
 
-  // Rotación automática
+  const [current, setCurrent] = useState(0);
+
+  // Al montar (cliente), seteamos el índice inicial calculado
   useEffect(() => {
-    if (videos.length === 0) return;
+    if (mounted && videos.length > 0) setCurrent(safeStartIndex);
+  }, [mounted, safeStartIndex, videos.length]);
+
+  // Rotación automática luego del primer render en cliente
+  useEffect(() => {
+    if (!mounted || videos.length === 0) return;
     const t = setInterval(() => {
       setCurrent((i) => (i + 1) % videos.length);
     }, interval);
     return () => clearInterval(t);
-  }, [videos.length, interval]);
+  }, [mounted, videos.length, interval]);
 
+  const [isLoaded, setIsLoaded] = useState(false);
   const handleLoaded = () => setIsLoaded(true);
 
-  // Fallback si no hay videos
-  if (videos.length === 0) {
+  // Placeholder estable para SSR / antes de montar (evita mismatch)
+  if (!mounted || videos.length === 0) {
     return (
-      <div className={`absolute inset-0 overflow-hidden ${className} pointer-events-none`}>
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-100" />
-        <div className="absolute inset-0 bg-black/40" />
+      <div className={`absolute inset-0 overflow-hidden ${className} pointer-events-none`} aria-hidden="true">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-100 z-0" />
+        <div className="absolute inset-0 bg-black/40 z-10" />
       </div>
     );
   }
@@ -56,7 +66,7 @@ const VideoCarousel = ({
       className={`absolute inset-0 overflow-hidden ${className} pointer-events-none`}
       aria-hidden="true"
     >
-      {/* Crossfade real: entra con fade-in mientras el anterior hace fade-out */}
+      {/* Crossfade suave: el nuevo hace fade-in mientras el anterior fade-out */}
       <AnimatePresence mode="sync">
         <motion.div
           key={current}
@@ -67,7 +77,7 @@ const VideoCarousel = ({
           transition={{ duration: crossfadeDuration, ease: "easeInOut" }}
         >
           <video
-            key={videos[current]}                 // fuerza repintado limpio al cambiar
+            key={videos[current]} // fuerza repintado limpio al cambiar de índice
             className="w-full h-full object-cover"
             autoPlay
             muted
@@ -77,17 +87,16 @@ const VideoCarousel = ({
             onLoadedData={handleLoaded}
             onError={(e) => console.warn(`Error cargando: ${videos[current]}`, e)}
           >
-            {/* Podés sumar una segunda fuente .webm si querés mayor compatibilidad */}
             <source src={videos[current]} type="video/mp4" />
             Tu navegador no soporta el video.
           </video>
         </motion.div>
       </AnimatePresence>
 
-      {/* Overlay para mejorar legibilidad del texto por encima */}
+      {/* Overlay para legibilidad del texto por encima */}
       <div className="absolute inset-0 bg-black/40 z-10" />
 
-      {/* Fallback mientras carga el primer video */}
+      {/* Fallback visual mientras carga el primer video */}
       {!isLoaded && (
         <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-100 z-0" />
       )}
