@@ -21,7 +21,7 @@ export default function Home() {
     '/carrusel/barco.mp4',
     '/carrusel/globos.mp4',
     '/carrusel/playa.mp4',
-    '/carrusel/puente.mp4',
+    '/carrusel/jeep.mp4',
   ];
 
   return (
