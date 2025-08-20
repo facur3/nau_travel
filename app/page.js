@@ -16,12 +16,13 @@ export default function Home() {
     setTimeout(() => setShowSlogan(true), 2000);
   };
 
+  // URLs de Cloudinary con los nombres correctos
   const carouselVideos = [
-    '/carrusel/avion.mp4',
-    '/carrusel/barco.mp4',
-    '/carrusel/globos.mp4',
-    '/carrusel/playa.mp4',
-    '/carrusel/jeep.mp4',
+    'https://res.cloudinary.com/dmpfiohfe/video/upload/v1/avion_ewtksg.mp4',
+    'https://res.cloudinary.com/dmpfiohfe/video/upload/v1/barco_k4fty6.mp4',
+    'https://res.cloudinary.com/dmpfiohfe/video/upload/v1/globos_zjpzoh.mp4',
+    'https://res.cloudinary.com/dmpfiohfe/video/upload/v1/jeep_w4fyoo.mp4',
+    'https://res.cloudinary.com/dmpfiohfe/video/upload/v1/playa_p7rs8j.mp4',
   ];
 
   return (
@@ -30,10 +31,6 @@ export default function Home() {
         videos={carouselVideos}
         interval={10000}
         className="z-0"
-        // podés fijar el primero de forma determinista si querés:
-        // startIndex={0}
-        // y ajustar lo sutil del crossfade:
-        // crossfadeDuration={1.8}
       />
 
       <CardNav
