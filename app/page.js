@@ -18,11 +18,12 @@ export default function Home() {
 
   // URLs de Cloudinary con los nombres correctos
   const carouselVideos = [
-    'https://res.cloudinary.com/dmpfiohfe/video/upload/v1/avion_ewtksg.mp4',
-    'https://res.cloudinary.com/dmpfiohfe/video/upload/v1/barco_k4fty6.mp4',
-    'https://res.cloudinary.com/dmpfiohfe/video/upload/v1/globos_zjpzoh.mp4',
-    'https://res.cloudinary.com/dmpfiohfe/video/upload/v1/jeep_w4fyoo.mp4',
-    'https://res.cloudinary.com/dmpfiohfe/video/upload/v1/playa_p7rs8j.mp4',
+    // Primer video con optimizaciones agresivas para carga rápida
+    'https://res.cloudinary.com/dmpfiohfe/video/upload/q_auto:low,c_fill,w_1920,h_1080/v1/avion_ewtksg.mp4',
+    'https://res.cloudinary.com/dmpfiohfe/video/upload/q_auto:good/v1/barco_k4fty6.mp4',
+    'https://res.cloudinary.com/dmpfiohfe/video/upload/q_auto:good/v1/globos_zjpzoh.mp4',
+    'https://res.cloudinary.com/dmpfiohfe/video/upload/q_auto:good/v1/jeep_w4fyoo.mp4',
+    'https://res.cloudinary.com/dmpfiohfe/video/upload/q_auto:good/v1/playa_p7rs8j.mp4',
   ];
 
   return (
