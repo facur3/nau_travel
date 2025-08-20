@@ -1,4 +1,5 @@
 "use client";
+import supabase from '../lib/supabaseClient';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -11,6 +12,9 @@ const AuthModal = ({ isOpen, onClose }) => {
     firstName: '',
     lastName: ''
   });
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [okMsg, setOkMsg] = useState('');
 
   const handleInputChange = (e) => {
     setFormData({
@@ -19,13 +23,71 @@ const AuthModal = ({ isOpen, onClose }) => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(`${activeTab} submitted:`, formData);
+    setErrorMsg('');
+    setOkMsg('');
+    setLoading(true);
+
+    try {
+      if (activeTab === 'signup') {
+        // validación simple
+        if (!formData.email || !formData.password) {
+          setErrorMsg('Completa email y contraseña.');
+          return;
+        }
+        if (formData.password !== formData.confirmPassword) {
+          setErrorMsg('Las contraseñas no coinciden.');
+          return;
+        }
+
+        const { error } = await supabase.auth.signUp({
+          email: formData.email,
+          password: formData.password,
+          options: {
+            data: { firstName: formData.firstName, lastName: formData.lastName }
+          }
+        });
+
+        if (error) throw error;
+
+        setOkMsg('Cuenta creada. Revisa tu email para confirmar.');
+        // opcional: limpiar y/o cerrar
+        // onClose();
+        // setFormData({ email:'', password:'', confirmPassword:'', firstName:'', lastName:'' });
+      } else {
+        // LOGIN
+        const { error } = await supabase.auth.signInWithPassword({
+          email: formData.email,
+          password: formData.password
+        });
+
+        if (error) throw error;
+
+        setOkMsg('¡Bienvenido!');
+        onClose(); // cerrar modal al entrar
+      }
+    } catch (err) {
+      setErrorMsg(err.message || 'Ocurrió un error. Intenta nuevamente.');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSocialLogin = (provider) => {
-    console.log(`Login with ${provider}`);
+  const handleSocialLogin = async (provider) => {
+    setErrorMsg('');
+    setOkMsg('');
+    setLoading(true);
+
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({ provider });
+      if (error) throw error;
+      // Supabase redirige automáticamente al flujo OAuth; no hace falta más acá.
+    } catch (err) {
+      setErrorMsg(err.message || 'No se pudo iniciar con proveedor.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -263,6 +325,19 @@ const AuthModal = ({ isOpen, onClose }) => {
                     >
                       <button
                         type="button"
+                        onClick={async () => {
+                          setErrorMsg('');
+                          setOkMsg('');
+                          if (!formData.email) {
+                            setErrorMsg('Escribe tu email para enviarte el enlace.');
+                            return;
+                          }
+                          const { error } = await supabase.auth.resetPasswordForEmail(formData.email, {
+                            redirectTo: window.location.origin + '/reset-password' // crea esta ruta si querés
+                          });
+                          if (error) setErrorMsg(error.message);
+                          else setOkMsg('Te enviamos un enlace para restablecer tu contraseña.');
+                        }}
                         className="text-sm text-gray-600 hover:text-black transition-colors duration-200 font-medium"
                       >
                         ¿Olvidaste tu contraseña?
@@ -272,15 +347,22 @@ const AuthModal = ({ isOpen, onClose }) => {
 
                   <motion.button
                     type="submit"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
+                    disabled={loading}
+                    whileHover={{ scale: loading ? 1 : 1.02 }}
+                    whileTap={{ scale: loading ? 1 : 0.98 }}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: activeTab === 'signup' ? 0.5 : 0.4 }}
-                    className="w-full bg-black hover:bg-gray-800 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
+                    className={`w-full ${loading ? 'opacity-70 cursor-not-allowed' : ''} bg-black hover:bg-gray-800 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl`}
                   >
-                    {activeTab === 'login' ? 'Iniciar Sesión' : 'Crear Cuenta'}
+                    {loading ? 'Procesando...' : (activeTab === 'login' ? 'Iniciar Sesión' : 'Crear Cuenta')}
                   </motion.button>
+                  {errorMsg && (
+                    <p className="mt-4 text-sm text-red-600 text-center">{errorMsg}</p>
+                  )}
+                  {okMsg && (
+                    <p className="mt-4 text-sm text-green-600 text-center">{okMsg}</p>
+                  )}
                 </motion.form>
               </AnimatePresence>
 
