@@ -1,50 +1,108 @@
 "use client";
-import PixelTransition from './PixelTransition';
 import SplitText from './SplitText';
+import { cn } from '../lib/utils';
+
+const SeasonCard = ({
+  title,
+  subtitle,
+  description,
+  imageSrc,
+  imageAlt,
+  className,
+}) => {
+  return (
+    <div
+      className={cn(
+        "group relative flex flex-col justify-end p-6 w-full md:w-1/3 h-[350px] lg:h-[450px] bg-black rounded-lg overflow-hidden shadow-lg transition-all duration-500 hover:w-2/3",
+        className
+      )}
+    >
+      <img
+        src={imageSrc}
+        className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+        alt={imageAlt || title}
+        loading="lazy"
+        onError={(e) => {
+          console.error(`Failed to load image: ${imageSrc}`);
+          // Keep the image element but show a fallback background
+          e.target.style.opacity = '0';
+          e.target.parentElement.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        }}
+        onLoad={() => {
+          console.log(`Image loaded successfully: ${imageSrc}`);
+        }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+      
+      <div className="relative z-10">
+        <div className="transform transition-transform duration-500 ease-in-out group-hover:-translate-y-16">
+          <h2 className="text-xl font-bold text-white">{title}</h2>
+          <p className="text-sm text-gray-300">{subtitle}</p>
+        </div>
+        <div className="absolute top-0 left-0 opacity-0 transition-opacity duration-500 ease-in-out group-hover:opacity-100">
+          <p className="text-base text-white leading-relaxed">{description}</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const SeasonalHoverCards = ({
+  cards,
+  className,
+}) => {
+  return (
+    <div className={cn("flex flex-wrap md:flex-nowrap gap-4 w-full px-4", className)}>
+      {cards.map((card, index) => (
+        <SeasonCard
+          key={index}
+          title={card.title}
+          subtitle={card.subtitle}
+          description={card.description}
+          imageSrc={card.imageSrc}
+          imageAlt={card.imageAlt}
+        />
+      ))}
+    </div>
+  );
+};
 
 const AsianDestinations = () => {
   const destinations = [
     {
-      id: 'tokyo',
-      name: 'Tokio, Japón',
-      image: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=1000&auto=format&fit=crop',
-      description: 'La metrópolis futurista donde la tradición milenaria se encuentra con la tecnología más avanzada.',
-      highlights: ['Templos antiguos', 'Tecnología futurista', 'Gastronomía única'],
+      title: 'Tokio, Japón',
+      subtitle: 'Metrópolis futurista',
+      description: 'La metrópolis futurista donde la tradición milenaria se encuentra con la tecnología más avanzada. Descubre templos antiguos, tecnología futurista y gastronomía única.',
+      imageSrc: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&h=600&fit=crop&crop=entropy&auto=format&q=80',
+      imageAlt: 'Tokyo skyline with traditional and modern architecture',
     },
     {
-      id: 'bali',
-      name: 'Bali, Indonesia',
-      image: 'https://images.unsplash.com/photo-1537953773345-d172ccf13cf1?q=80&w=1000&auto=format&fit=crop',
-      description: 'Paraíso tropical con templos sagrados, playas paradisíacas y cultura vibrante.',
-      highlights: ['Templos hinduistas', 'Playas de ensueño', 'Cultura balinesa'],
+      title: 'Bali, Indonesia',
+      subtitle: 'Paraíso tropical',
+      description: 'Paraíso tropical con templos sagrados, playas paradisíacas y cultura vibrante. Explora templos hinduistas, playas de ensueño y la auténtica cultura balinesa.',
+      imageSrc: 'https://images.unsplash.com/photo-1537953773345-d172ccf13cf1?w=800&h=600&fit=crop&crop=entropy&auto=format&q=80',
+      imageAlt: 'Beautiful Bali temple surrounded by tropical nature',
     },
     {
-      id: 'seoul',
-      name: 'Seúl, Corea del Sur',
-      image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?q=80&w=1000&auto=format&fit=crop',
-      description: 'Capital moderna llena de innovación, K-pop, tecnología y tradiciones coreanas.',
-      highlights: ['Palacios históricos', 'Cultura K-pop', 'Tecnología avanzada'],
+      title: 'Seúl, Corea del Sur',
+      subtitle: 'Capital moderna',
+      description: 'Capital moderna llena de innovación, K-pop, tecnología y tradiciones coreanas. Visita palacios históricos, sumérgete en la cultura K-pop y descubre tecnología avanzada.',
+      imageSrc: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop&crop=entropy&auto=format&q=80',
+      imageAlt: 'Seoul modern cityscape with traditional palaces',
     },
     {
-      id: 'kyoto',
-      name: 'Kioto, Japón',
-      image: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=1000&auto=format&fit=crop',
-      description: 'Antigua capital imperial con miles de templos, jardines zen y geishas.',
-      highlights: ['Templos dorados', 'Jardines zen', 'Distrito de geishas'],
+      title: 'Kioto, Japón',
+      subtitle: 'Antigua capital imperial',
+      description: 'Antigua capital imperial con miles de templos, jardines zen y geishas. Explora templos dorados, jardines zen y el distrito de geishas.',
+      imageSrc: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800&h=600&fit=crop&crop=entropy&auto=format&q=80',
+      imageAlt: 'Fushimi Inari Shrine in Kyoto, Japan',
     },
     {
-      id: 'singapore',
-      name: 'Singapur',
-      image: 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?q=80&w=1000&auto=format&fit=crop',
-      description: 'Ciudad-estado cosmopolita con arquitectura impresionante y fusión cultural.',
-      highlights: ['Gardens by the Bay', 'Marina Bay Sands', 'Diversidad cultural'],
-    },
-    {
-      id: 'bangkok',
-      name: 'Bangkok, Tailandia',
-      image: 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?q=80&w=1000&auto=format&fit=crop',
-      description: 'Vibrante capital con templos dorados, mercados flotantes y street food increíble.',
-      highlights: ['Templos budistas', 'Mercados flotantes', 'Gastronomía thai'],
+      title: 'Singapur',
+      subtitle: 'Ciudad-estado cosmopolita',
+      description: 'Ciudad-estado cosmopolita con arquitectura impresionante y fusión cultural. Visita Gardens by the Bay, Marina Bay Sands y disfruta de su diversidad cultural.',
+      imageSrc: 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=800&h=600&fit=crop&crop=entropy&auto=format&q=80',
+      imageAlt: 'Gardens by the Bay in Singapore',
     },
   ];
 
@@ -75,60 +133,10 @@ const AsianDestinations = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
-          {destinations.map((destination, index) => (
-            <div key={destination.id} className="w-full max-w-xs transform transition-transform duration-300 hover:scale-105">
-              <PixelTransition
-                className="w-full"
-                gridSize={16}
-                pixelColor="#ffffff"
-                animationStepDuration={0.4}
-                aspectRatio="100%"
-                firstContent={
-                  <div className="relative w-full h-full">
-                    <img
-                      src={destination.image}
-                      alt={destination.name}
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                      onError={(e) => {
-                        console.error(`Failed to load image: ${destination.image}`);
-                        e.target.style.display = 'none';
-                      }}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                    <div className="absolute bottom-0 left-0 right-0 p-3">
-                      <h3 className="text-white text-lg font-bold">
-                        {destination.name}
-                      </h3>
-                    </div>
-                  </div>
-                }
-                secondContent={
-                  <div className="w-full h-full bg-black p-3 flex flex-col justify-center">
-                    <h3 className="text-white text-sm font-bold mb-2">
-                      {destination.name}
-                    </h3>
-                    <p className="text-gray-300 text-xs mb-2 leading-tight line-clamp-3">
-                      {destination.description}
-                    </p>
-                    <div className="space-y-1 mb-2">
-                      {destination.highlights.slice(0, 2).map((highlight, idx) => (
-                        <div key={idx} className="flex items-center text-xs text-gray-400">
-                          <span className="w-1 h-1 bg-white rounded-full mr-2"></span>
-                          {highlight}
-                        </div>
-                      ))}
-                    </div>
-                    <button className="bg-white text-black text-xs font-semibold py-1.5 px-3 rounded-md hover:bg-gray-200 transition-colors">
-                      Explorar
-                    </button>
-                  </div>
-                }
-              />
-            </div>
-          ))}
-        </div>
+        <SeasonalHoverCards
+          cards={destinations}
+          className="mb-16"
+        />
 
         <div className="text-center mt-16">
             <button className="hover:cursor-pointer relative px-6 py-4 bg-transparent border-2 border-white text-white font-bold text-lg rounded-2xl shadow-lg transition-all duration-250 overflow-hidden hover:text-black before:content-[''] before:absolute before:top-0 before:left-0 before:h-full before:w-0 before:bg-white before:rounded-2xl before:transition-all before:duration-250 before:z-[-1] hover:before:w-full z-10 backdrop-blur-sm">
