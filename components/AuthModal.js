@@ -137,9 +137,11 @@ const AuthModal = ({ isOpen, onClose }) => {
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ delay: 0.1, duration: 0.4 }}
                 >
-                  <div className="w-12 h-12 bg-black rounded-2xl flex items-center justify-center shadow-lg">
-                    <span className="text-white font-bold text-xl">N</span>
-                  </div>
+                  <img 
+                    src="/logo_nau_travel.png" 
+                    alt="Nau Travel Logo" 
+                    className="w-12 h-12 object-contain rounded-2xl shadow-lg"
+                  />
                   <span className="text-3xl font-bold text-black">
                     NAU TRAVEL
                   </span>

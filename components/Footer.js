@@ -36,9 +36,11 @@ const Footer = () => {
             {/* Brand */}
             <div className="space-y-6">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                  <span className="text-white font-bold text-xl">N</span>
-                </div>
+                <img 
+                  src="/logo_nau_travel.png" 
+                  alt="Nau Travel Logo" 
+                  className="w-10 h-10 object-contain rounded-full"
+                />
                 <span className="text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
                   NAU TRAVEL
                 </span>

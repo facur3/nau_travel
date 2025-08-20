@@ -54,7 +54,7 @@ export default function Home() {
         />
 
         <CardNav
-          logo="/logo.svg"
+          logo="/logo_nau_travel.png"
           logoAlt="Nau Travel Logo"
           items={[
             {
@@ -111,7 +111,7 @@ export default function Home() {
               onAnimationComplete={handleTitleComplete}
             />
             <BlurText
-              text="El viaje de tus sueños comienza now"
+              text="El viaje de tu vida comienza nau"
               delay={150}
               animateBy="words"
               direction="top"
