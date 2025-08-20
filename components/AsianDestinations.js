@@ -13,7 +13,7 @@ const SeasonCard = ({
   return (
     <div
       className={cn(
-        "group relative flex flex-col justify-end p-6 w-full md:w-1/3 h-[350px] lg:h-[450px] bg-black rounded-lg overflow-hidden shadow-lg transition-all duration-500 hover:w-2/3",
+        "group relative flex flex-col justify-end p-4 md:p-6 w-full md:w-1/5 h-[450px] bg-black rounded-lg overflow-hidden shadow-lg transition-all duration-500 ease-in-out hover:w-2/5",
         className
       )}
     >
@@ -34,13 +34,13 @@ const SeasonCard = ({
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
       
-      <div className="relative z-10">
-        <div className="transform transition-transform duration-500 ease-in-out group-hover:-translate-y-16">
-          <h2 className="text-xl font-bold text-white">{title}</h2>
-          <p className="text-sm text-gray-300">{subtitle}</p>
+      <div className="relative z-10 overflow-hidden">
+        <div className="mb-2">
+          <h2 className="text-lg md:text-xl font-bold text-white truncate">{title}</h2>
+          <p className="text-sm text-gray-300 transition-opacity duration-300 ease-in-out group-hover:opacity-0">{subtitle}</p>
         </div>
-        <div className="absolute top-0 left-0 opacity-0 transition-opacity duration-500 ease-in-out group-hover:opacity-100">
-          <p className="text-base text-white leading-relaxed">{description}</p>
+        <div className="absolute bottom-0 left-0 right-0 opacity-0 transition-all duration-500 ease-in-out group-hover:opacity-100 group-hover:relative">
+          <p className="text-sm md:text-base text-white leading-relaxed line-clamp-4">{description}</p>
         </div>
       </div>
     </div>
