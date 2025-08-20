@@ -10,9 +10,11 @@ import SplitText from '../components/SplitText';
 import BlurText from '../components/BlurText';
 import AsianDestinations from '../components/AsianDestinations';
 import Footer from '../components/Footer';
+import AuthModal from '../components/AuthModal';
 
 export default function Home() {
   const [showSlogan, setShowSlogan] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
 
   const handleTitleComplete = () => {
     setTimeout(() => setShowSlogan(true), 2000);
@@ -107,8 +109,11 @@ export default function Home() {
             <button className="hover:cursor-pointer relative px-6 py-4 bg-white bg-opacity-90 text-gray-800 font-bold text-lg rounded-2xl shadow-lg transition-all duration-250 overflow-hidden hover:text-white before:content-[''] before:absolute before:top-0 before:left-0 before:h-full before:w-0 before:bg-black before:rounded-2xl before:transition-all before:duration-250 before:z-[-1] hover:before:w-full z-10 backdrop-blur-sm">
               Explorar Destinos
             </button>
-            <button className="hover:cursor-pointer relative px-6 py-4 bg-transparent border-2 border-white text-white font-bold text-lg rounded-2xl shadow-lg transition-all duration-250 overflow-hidden hover:text-black before:content-[''] before:absolute before:top-0 before:left-0 before:h-full before:w-0 before:bg-white before:rounded-2xl before:transition-all before:duration-250 before:z-[-1] hover:before:w-full z-10 backdrop-blur-sm">
-              Contactar Asesor
+            <button 
+              onClick={() => setAuthModalOpen(true)}
+              className="hover:cursor-pointer relative px-6 py-4 bg-transparent border-2 border-white text-white font-bold text-lg rounded-2xl shadow-lg transition-all duration-250 overflow-hidden hover:text-black before:content-[''] before:absolute before:top-0 before:left-0 before:h-full before:w-0 before:bg-white before:rounded-2xl before:transition-all before:duration-250 before:z-[-1] hover:before:w-full z-10 backdrop-blur-sm"
+            >
+              Iniciar Sesión
             </button>
           </div>
         </main>
@@ -116,6 +121,11 @@ export default function Home() {
 
       <AsianDestinations />
       <Footer />
+      
+      <AuthModal 
+        isOpen={authModalOpen} 
+        onClose={() => setAuthModalOpen(false)} 
+      />
     </>
   );
 }
