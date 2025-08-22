@@ -9,7 +9,11 @@ const VideoCarousel = dynamic(() => import('../components/VideoCarousel'), { ssr
 import CardNav from '../components/CardNav';
 import SplitText from '../components/SplitText';
 import BlurText from '../components/BlurText';
+import ServicesSection from '../components/ServicesSection';
+import FeaturedPackages from '../components/FeaturedPackages';
 import AsianDestinations from '../components/AsianDestinations';
+import TestimonialsSection from '../components/TestimonialsSection';
+import QuickContactForm from '../components/QuickContactForm';
 import Footer from '../components/Footer';
 import AuthModal from '../components/AuthModal';
 
@@ -142,7 +146,11 @@ export default function Home() {
         </main>
       </div>
 
+      <ServicesSection />
+      <FeaturedPackages />
       <AsianDestinations />
+      <TestimonialsSection />
+      <QuickContactForm />
       <Footer />
       
       <AuthModal 
